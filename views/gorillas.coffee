@@ -44,22 +44,21 @@ class Painter
 window.onload = ->
   painter = new Painter
   painter.draw_building(40, 145)
-  painter.draw_building(142, 105)
+  painter.draw_building(141, 105)
 
   painter.set_color '#800000'
-  painter.draw_building(244, 165)
-  painter.draw_building(346, 155)
-  painter.draw_building(448, 95)
+  painter.draw_building(242, 165)
+  painter.draw_building(343, 155)
+  painter.draw_building(444, 95)
 
   painter.set_color '#C0C0C0'
-  painter.draw_building(550, 15)
+  painter.draw_building(545, 15)
 
   painter.set_color '#800000'
-  painter.draw_building(652, 215)
+  painter.draw_building(646, 215)
 
   painter.set_color '#C0C0C0'
-  painter.draw_building(754, 55)
-
+  painter.draw_building(747, 55)
   painter.set_color '#800000'
-  painter.draw_building(856, 45)
-  painter.draw_building(958, 0)
+  painter.draw_building(848, 15)
+  painter.draw_building(949, 0)
