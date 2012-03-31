@@ -33,7 +33,7 @@ class Sun
     @mouth = true
     @context = context
     @color = '#FFFF00'
-    @width = 50
+    @width = 40
     @y = 100
 
   position: ->
@@ -59,11 +59,10 @@ class Sun
     @context.arc @position()+10, @y-10, 5, 0, Math.PI*2,  true
     @context.fill()
 
-
   smile:() ->
     @context.strokeStyle = '#000000'
     @context.beginPath()
-    @context.arc @position(), @y+20, 15, 0, Math.PI,  false
+    @context.arc @position(), @y+20, @width/4, 0, Math.PI,  false
     @context.stroke()
 
   rays:() ->
@@ -74,7 +73,7 @@ class Sun
 
   draw_ray:(a) ->
     @context.moveTo @position(), @y
-    coords = @coordinates(@position(), @y, 75, a)
+    coords = @coordinates(@position(), @y, 65, a)
     @context.lineTo coords.x, coords.y
 
   coordinates:(x, y, d, a) ->
@@ -99,26 +98,33 @@ class Painter
   set_color:(color) ->
     @color = color
 
+  draw_gorillas: ->
+    image = new Image()
+    image.src = 'http://localhost:9292/images/gorilla.png'
+    @context.drawImage(image, 130, 640-280, 40, 40)
+    @context.drawImage(image, 835, 640-190, 40, 40)
+
 window.onload = ->
   painter = new Painter
   painter.draw_the_sun()
-  painter.draw_building(40, 145)
-  painter.draw_building(141, 105)
+  painter.draw_building(0, 145)
+  painter.draw_building(101, 105)
 
   painter.set_color '#800000'
-  painter.draw_the_sun
-  painter.draw_building(242, 165)
-  painter.draw_building(343, 155)
-  painter.draw_building(444, 95)
+  painter.draw_building(202, 165)
+  painter.draw_building(303, 155)
+  painter.draw_building(404, 95)
 
   painter.set_color '#C0C0C0'
-  painter.draw_building(545, 15)
+  painter.draw_building(505, 15)
 
   painter.set_color '#800000'
-  painter.draw_building(646, 215)
+  painter.draw_building(606, 215)
 
   painter.set_color '#C0C0C0'
-  painter.draw_building(747, 55)
+  painter.draw_building(707, 55)
   painter.set_color '#800000'
-  painter.draw_building(848, 15)
-  painter.draw_building(949, 0)
+  painter.draw_building(808, 15)
+  painter.draw_building(909, 0)
+
+  painter.draw_gorillas()
