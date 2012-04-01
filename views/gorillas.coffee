@@ -2,12 +2,12 @@ class Building
   constructor:(context, color) ->
     @context = context
     @width = 100
-    @height = 135
+    @base_height = 135
     @color = color
 
   draw:(x,y) ->
     @context.fillStyle = @color
-    @height = @height + y
+    @height = @base_height + y
     @context.fillRect x, 640-@height, @width, @height
     @build_windows(x, y)
 
