@@ -137,8 +137,11 @@ class Painter
     @player_2 = new Gorilla(@context)
     @player_2.draw(building.position_at_x(), building.position_at_y())
 
-  throw_banana:(force, angle) ->
-    @player_1.throw_banana(force, angle)
+  throw_banana:(force, angle, player) ->
+    if player == 2
+      angle = -angle
+      force = -force if player == 2
+    this['player_' + player].throw_banana(force, angle)
 
 class Gorilla
   constructor:(@context) ->
@@ -200,9 +203,9 @@ class Banana
 
 
 window.onload = ->
-  painter = new Painter
-  painter.draw_the_sun()
-  painter.draw_buildings()
+  @painter = new Painter
+  @painter.draw_the_sun()
+  @painter.draw_buildings()
 
-  painter.draw_gorillas()
-  painter.throw_banana(30, 45)
+  @painter.draw_gorillas()
+  @painter.throw_banana(30, 45, 1)
