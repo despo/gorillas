@@ -16,10 +16,12 @@ class Building
     windows = [ 10, 25, 40, 55, 70, 85 ]
     current_distance = 30
     total_height = 30
-    @context.fillStyle = '#FFFF00'
+    light = '#FFFF00'
+    dark = '#808080'
     row = 1
     loop
       break if times < row
+      @context.fillStyle = light
       @create_window x+z, 620+total_height-@height for z in windows
       total_height += current_distance
       row++
@@ -68,6 +70,7 @@ class Sun
   rays:() ->
     @context.strokeStyle = @color
     @context.beginPath()
+    @context.lineWidth = 1
     @draw_ray(360*z/36) for z in [0...50]
     @context.stroke()
 
@@ -100,9 +103,57 @@ class Painter
 
   draw_gorillas: ->
     image = new Image()
-    image.src = 'http://localhost:9292/images/gorilla.png'
+    image.src = 'images/gorilla.png'
     @context.drawImage(image, 130, 640-280, 40, 40)
     @context.drawImage(image, 835, 640-190, 40, 40)
+
+  draw_banana:() ->
+    banana = new Banana(@context)
+
+class Banana
+  constructor:(context) ->
+    @context = context
+    @color = '#0000a0'
+    @initx = 130
+    @inity = 640-280-40
+    @t = 0
+    @x = 0
+    @y = 0
+    @g = -9.8
+
+    F = 40
+    angle = 70
+
+    @dx = F/Math.cos(angle)
+    @dy = F/Math.sin(angle)
+
+    @on_load()
+
+  on_load: ->
+    @avg_delay = 0
+    @draw_frame()
+
+  draw: ->
+    bg = new Image()
+    bg.src = 'images/banana.png'
+    @context.fillStyle = @color
+    @context.fillRect @initx+@x, @inity-@y, 40, 30
+    @context.drawImage bg, @initx+@x, @inity-@y
+
+  draw_frame: ->
+    @calculate_projection()
+
+    @draw()
+
+    @t += 200
+
+    setTimeout (=> @draw_frame()), 200
+
+  calculate_projection:() ->
+    @x += @dx
+    @dy += @g
+    @y += @dy
+
 
 window.onload = ->
   painter = new Painter
@@ -128,3 +179,5 @@ window.onload = ->
   painter.draw_building(909, 0)
 
   painter.draw_gorillas()
+
+  painter.draw_banana()
