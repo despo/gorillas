@@ -1,9 +1,9 @@
 class Building
-  constructor:(context, color) ->
+  constructor:(context) ->
     @context = context
     @width = 100
     @base_height = 135
-    @color = color
+    @randomize_color()
 
   draw:(x,y) ->
     @context.fillStyle = @color
@@ -29,6 +29,10 @@ class Building
   create_window:(x, y) ->
     @context.fillRect x, y, 8, 16
 
+  randomize_color:() ->
+    colors = [ '#C0C0C0', '#800000', '#00FFFF' ]
+    random = Math.floor(Math.random()*colors.length)
+    @color = colors[random]
 
 class Sun
   constructor:(context) ->
@@ -83,7 +87,6 @@ class Sun
     x: x + d * Math.cos(a),
     y: y + d * Math.sin(a)
 
-
 class Painter
   constructor: ->
     @canvas = document.getElementById "gorillas"
@@ -91,29 +94,12 @@ class Painter
     @color = '#00FFFF'
 
   draw_buildings:()->
-    @draw_building(0, 145)
-    @draw_building(101, 105)
+    @draw_building(position) for position in [0, 101, 202, 303, 404, 505, 606, 707, 808, 909 ]
 
-    @set_color '#800000'
-    @draw_building(202, 165)
-    @draw_building(303, 155)
-    @draw_building(404, 95)
+  draw_building:(x) ->
+    building = new Building(@context)
 
-    @set_color '#C0C0C0'
-    @draw_building(505, 15)
-
-    @set_color '#800000'
-    @draw_building(606, 215)
-
-    @set_color '#C0C0C0'
-    @draw_building(707, 55)
-    @set_color '#800000'
-    @draw_building(808, 15)
-    @draw_building(909, 0)
-
-
-  draw_building:(x, y) ->
-    building = new Building(@context, @color)
+    y = Math.floor(Math.random()*215)
     building.draw(x, y)
 
   draw_the_sun: ->
