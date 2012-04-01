@@ -114,7 +114,6 @@ class Painter
       building = @draw_building(position)
       position = building.end_position() + @padding
 
-
   draw_building:(x) ->
     building = new Building(@context)
 
@@ -131,14 +130,15 @@ class Painter
     @color = color
 
   draw_gorillas: ->
-    building = @buildings[2]
-    gorilla_1 = new Gorilla(@context)
-    gorilla_1.draw(building.position_at_x(), building.position_at_y())
-    building = @buildings[7]
-    gorilla_2 = new Gorilla(@context)
-    gorilla_2.draw(building.position_at_x(), building.position_at_y())
+    building = @buildings[Math.floor(Math.random()*3)]
+    @player_1 = new Gorilla(@context)
+    @player_1.draw(building.position_at_x(), building.position_at_y())
+    building = @buildings[Math.floor(Math.random()*6)+3]
+    @player_2 = new Gorilla(@context)
+    @player_2.draw(building.position_at_x(), building.position_at_y())
 
-    gorilla_1.throw_banana()
+  throw_banana:(force, angle) ->
+    @player_1.throw_banana(force, angle)
 
 class Gorilla
   constructor:(@context) ->
@@ -154,9 +154,9 @@ class Gorilla
     @y = y-40
     @context.drawImage(@image(), @x, @y, 40, 40)
 
-  throw_banana: ->
+  throw_banana:(force, angle) ->
     banana = new Banana(@context, @x+30, @y-30)
-    banana.throw(30, 45)
+    banana.throw(force, angle)
 
 class Banana
   constructor:(context, initial_x, initial_y) ->
@@ -170,8 +170,8 @@ class Banana
   throw:(force, angle) ->
     @force = force
     @angle = angle
-
     @calculate_initial_position()
+
     setTimeout (=> @draw_frame()), 150
 
   draw: ->
@@ -205,3 +205,4 @@ window.onload = ->
   painter.draw_buildings()
 
   painter.draw_gorillas()
+  painter.throw_banana(30, 45)
