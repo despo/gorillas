@@ -141,7 +141,7 @@ class Banana
     @inity = initial_y
     @x = 0
     @y = 0
-    @g = -9.8
+    @g = -9.80665
 
     F = 40
     angle = 70
