@@ -13,26 +13,31 @@ class Building
 
   build_windows:(x, y) ->
     times = Math.round (@height)/31
-    windows = [ 10, 25, 40, 55, 70, 85 ]
+    window_positions = [ 10, 25, 40, 55, 70, 85 ]
     current_distance = 30
     total_height = 30
-    light = '#FFFF00'
-    dark = '#808080'
     row = 1
     loop
       break if times < row
-      @context.fillStyle = light
-      @create_window x+z, 620+total_height-@height for z in windows
+      @create_window x+position, 620+total_height-@height for position in window_positions
       total_height += current_distance
       row++
 
   create_window:(x, y) ->
+    @randomize_window_color()
+    @context.fillStyle = @color
     @context.fillRect x, y, 8, 16
 
   randomize_color:() ->
     colors = [ '#C0C0C0', '#800000', '#00FFFF' ]
     random = Math.floor(Math.random()*colors.length)
     @color = colors[random]
+
+  randomize_window_color:() ->
+    colors = [ '#808080', '#FFFF00' ]
+    random = Math.floor(Math.random()*5)
+    random % 10
+    @color = if random > 0 then colors[1] else colors[random]
 
 class Sun
   constructor:(context) ->
@@ -92,6 +97,7 @@ class Painter
     @canvas = document.getElementById "gorillas"
     @context = @canvas.getContext "2d"
     @color = '#00FFFF'
+    @buildings = []
 
   draw_buildings:()->
     @draw_building(position) for position in [0, 101, 202, 303, 404, 505, 606, 707, 808, 909 ]
