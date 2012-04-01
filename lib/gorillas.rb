@@ -7,7 +7,7 @@ module Gorillas
 
     set :haml, :format => :html5
     set :views, "#{Dir.pwd}/views"
-    set :public, "#{Dir.pwd}/public"
+    set :public_folder, "#{Dir.pwd}/public"
 
     get '/' do
       haml :index
