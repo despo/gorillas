@@ -134,11 +134,9 @@ class Banana
     @draw_frame()
 
   draw: ->
-    bg = new Image()
-    bg.src = 'images/banana.png'
     @context.fillStyle = @color
     @context.fillRect @initx+@x, @inity-@y, 40, 30
-    @context.drawImage bg, @initx+@x, @inity-@y
+    @context.drawImage @image(), @initx+@x, @inity-@y
 
   draw_frame: ->
     @calculate_projection()
@@ -153,6 +151,11 @@ class Banana
     @x += @dx
     @dy += @g
     @y += @dy
+
+  image:() ->
+    image = new Image()
+    image.src = 'images/banana.png'
+    return image
 
 
 window.onload = ->
