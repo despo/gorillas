@@ -1,8 +1,8 @@
 class Building
   constructor:(context) ->
     @context = context
-    @width = 100
-    @base_height = 135
+    @width = 90 + Math.floor(Math.random()*40)
+    @base_height = 100
     @randomize_color()
 
   position_at_x:() ->
@@ -10,6 +10,9 @@ class Building
 
   position_at_y:() ->
     return  640-@height
+
+  end_position:() ->
+    return @position_at_x()+@width
 
   draw:(@x, @y) ->
     @context.fillStyle = @color
@@ -42,7 +45,6 @@ class Building
   randomize_window_color:() ->
     colors = [ '#808080', '#FFFF00' ]
     random = Math.floor(Math.random()*5)
-    random % 10
     @color = if random > 0 then colors[1] else colors[random]
 
 class Sun
@@ -103,17 +105,23 @@ class Painter
     @canvas = document.getElementById "gorillas"
     @context = @canvas.getContext "2d"
     @color = '#00FFFF'
+    @padding = 1
     @buildings = []
 
   draw_buildings:()->
-    @draw_building(position) for position in [0, 101, 202, 303, 404, 505, 606, 707, 808, 909 ]
+    position = 0
+    for [1...10]
+      building = @draw_building(position)
+      position = building.end_position() + @padding
+
 
   draw_building:(x) ->
     building = new Building(@context)
 
-    y = Math.floor(Math.random()*215)
+    y = Math.floor(Math.random()*300)
     building.draw(x, y)
     @buildings.push building
+    return building
 
   draw_the_sun: ->
     sun = new Sun(@context)
@@ -122,16 +130,13 @@ class Painter
   set_color:(color) ->
     @color = color
 
-  pick_random_building: ->
-    random = Math.floor(Math.random()*@buildings.length)
-    return @buildings[random]
-
   draw_gorillas: ->
-    building = @pick_random_building()
+    building = @buildings[2]
     gorilla_1 = new Gorilla(@context)
     gorilla_1.draw(building.position_at_x(), building.position_at_y())
+    building = @buildings[7]
     gorilla_2 = new Gorilla(@context)
-    #gorilla_2.draw(835, 640-190)
+    gorilla_2.draw(building.position_at_x(), building.position_at_y())
 
     gorilla_1.throw_banana()
 
