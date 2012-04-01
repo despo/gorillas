@@ -129,9 +129,7 @@ class Painter
     gorilla_2 = new Gorilla(@context)
     gorilla_2.draw(835, 640-190)
 
-  draw_banana:(gorilla_x, gorilla_y) ->
-    banana = new Banana(@context, gorilla_x+30, gorilla_y-30)
-    banana.throw(30, 45)
+    gorilla_1.throw_banana()
 
 class Gorilla
   constructor:(@context) ->
@@ -143,7 +141,13 @@ class Gorilla
     image
 
   draw:(x, y) ->
-    @context.drawImage(@image(), x, y, 40, 40)
+    @x = x
+    @y = y
+    @context.drawImage(@image(), @x, @y, 40, 40)
+
+  throw_banana: ->
+    banana = new Banana(@context, @x+30, @y-30)
+    banana.throw(30, 45)
 
 class Banana
   constructor:(context, initial_x, initial_y) ->
@@ -192,5 +196,3 @@ window.onload = ->
   painter.draw_buildings()
 
   painter.draw_gorillas()
-
-  painter.draw_banana(130, 640-280)
