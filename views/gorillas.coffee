@@ -90,6 +90,28 @@ class Painter
     @context = @canvas.getContext "2d"
     @color = '#00FFFF'
 
+  draw_buildings:()->
+    @draw_building(0, 145)
+    @draw_building(101, 105)
+
+    @set_color '#800000'
+    @draw_building(202, 165)
+    @draw_building(303, 155)
+    @draw_building(404, 95)
+
+    @set_color '#C0C0C0'
+    @draw_building(505, 15)
+
+    @set_color '#800000'
+    @draw_building(606, 215)
+
+    @set_color '#C0C0C0'
+    @draw_building(707, 55)
+    @set_color '#800000'
+    @draw_building(808, 15)
+    @draw_building(909, 0)
+
+
   draw_building:(x, y) ->
     building = new Building(@context, @color)
     building.draw(x, y)
@@ -137,12 +159,9 @@ class Banana
 
   draw_frame: ->
     @calculate_projection()
-
     @draw()
 
-    @t += 200
-
-    setTimeout (=> @draw_frame()), 200
+    setTimeout (=> @draw_frame()), 100
 
   calculate_projection:() ->
     @x += @dx
@@ -158,25 +177,7 @@ class Banana
 window.onload = ->
   painter = new Painter
   painter.draw_the_sun()
-  painter.draw_building(0, 145)
-  painter.draw_building(101, 105)
-
-  painter.set_color '#800000'
-  painter.draw_building(202, 165)
-  painter.draw_building(303, 155)
-  painter.draw_building(404, 95)
-
-  painter.set_color '#C0C0C0'
-  painter.draw_building(505, 15)
-
-  painter.set_color '#800000'
-  painter.draw_building(606, 215)
-
-  painter.set_color '#C0C0C0'
-  painter.draw_building(707, 55)
-  painter.set_color '#800000'
-  painter.draw_building(808, 15)
-  painter.draw_building(909, 0)
+  painter.draw_buildings()
 
   painter.draw_gorillas()
 
