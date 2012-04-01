@@ -140,7 +140,7 @@ class Painter
   throw_banana:(force, angle, player) ->
     if player == 2
       angle = -angle
-      force = -force if player == 2
+      force = -force
     this['player_' + player].throw_banana(force, angle)
 
 class Gorilla
