@@ -108,15 +108,15 @@ class Painter
     @context.drawImage(image, 835, 640-190, 40, 40)
 
   draw_banana:() ->
-    banana = new Banana(@context)
+    banana = new Banana(@context, 130, 640-280-40)
+    banana.animate()
 
 class Banana
-  constructor:(context) ->
+  constructor:(context, initial_x, initial_y) ->
     @context = context
     @color = '#0000a0'
-    @initx = 130
-    @inity = 640-280-40
-    @t = 0
+    @initx = initial_x
+    @inity = initial_y
     @x = 0
     @y = 0
     @g = -9.8
@@ -127,10 +127,7 @@ class Banana
     @dx = F/Math.cos(angle)
     @dy = F/Math.sin(angle)
 
-    @on_load()
-
-  on_load: ->
-    @avg_delay = 0
+  animate: ->
     @draw_frame()
 
   draw: ->
