@@ -136,7 +136,6 @@ class Painter
 class Banana
   constructor:(context, initial_x, initial_y) ->
     @context = context
-    @color = '#0000a0'
     @initx = initial_x
     @inity = initial_y
     @x = 0
@@ -153,8 +152,6 @@ class Banana
     @draw_frame()
 
   draw: ->
-    @context.fillStyle = @color
-    @context.fillRect @initx+@x, @inity-@y, 40, 30
     @context.drawImage @image(), @initx+@x, @inity-@y
 
   draw_frame: ->
