@@ -129,8 +129,8 @@ class Painter
     @context.drawImage(image, 130, 640-280, 40, 40)
     @context.drawImage(image, 835, 640-190, 40, 40)
 
-  draw_banana:() ->
-    banana = new Banana(@context, 130, 640-280-40)
+  draw_banana:(gorilla_x, gorilla_y) ->
+    banana = new Banana(@context, gorilla_x+30, gorilla_y-30)
     banana.animate()
 
 class Banana
@@ -181,4 +181,4 @@ window.onload = ->
 
   painter.draw_gorillas()
 
-  painter.draw_banana()
+  painter.draw_banana(130, 640-280)
