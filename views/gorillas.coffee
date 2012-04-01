@@ -124,14 +124,26 @@ class Painter
     @color = color
 
   draw_gorillas: ->
-    image = new Image()
-    image.src = 'images/gorilla.png'
-    @context.drawImage(image, 130, 640-280, 40, 40)
-    @context.drawImage(image, 835, 640-190, 40, 40)
+    gorilla_1 = new Gorilla(@context)
+    gorilla_1.draw(130, 640-280)
+    gorilla_2 = new Gorilla(@context)
+    gorilla_2.draw(835, 640-190)
 
   draw_banana:(gorilla_x, gorilla_y) ->
     banana = new Banana(@context, gorilla_x+30, gorilla_y-30)
     banana.throw(30, 45)
+
+class Gorilla
+  constructor:(@context) ->
+    @context = context
+
+  image: ->
+    image = new Image()
+    image.src = 'images/gorilla.png'
+    image
+
+  draw:(x, y) ->
+    @context.drawImage(@image(), x, y, 40, 40)
 
 class Banana
   constructor:(context, initial_x, initial_y) ->
