@@ -158,8 +158,8 @@ class Banana
     @context.drawImage @image(), @initx+@x, @inity-@y
 
   draw_frame: ->
-    @calculate_projection()
     @draw()
+    @calculate_projection()
 
     setTimeout (=> @draw_frame()), 100
 
