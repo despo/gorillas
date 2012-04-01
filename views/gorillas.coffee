@@ -131,7 +131,7 @@ class Painter
 
   draw_banana:(gorilla_x, gorilla_y) ->
     banana = new Banana(@context, gorilla_x+30, gorilla_y-30)
-    banana.animate()
+    banana.throw(30, 45)
 
 class Banana
   constructor:(context, initial_x, initial_y) ->
@@ -142,14 +142,11 @@ class Banana
     @y = 0
     @g = 9.8
 
-    F = 13
-    angle = 45.0
-    radian = angle*Math.PI/180
+  throw:(force, angle) ->
+    @force = force
+    @angle = angle
 
-    @dx = F/Math.cos(radian)
-    @dy = F/Math.sin(radian)
-
-  animate: ->
+    @calculate_initial_position()
     setTimeout (=> @draw_frame()), 150
 
   draw: ->
@@ -160,6 +157,11 @@ class Banana
     @calculate_projection()
 
     setTimeout (=> @draw_frame()), 150
+
+  calculate_initial_position: ->
+    radian = @angle*Math.PI/180
+    @dx = @force/Math.cos(radian)
+    @dy = @force/Math.sin(radian)
 
   calculate_projection:() ->
     @x += @dx
