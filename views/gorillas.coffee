@@ -5,11 +5,17 @@ class Building
     @base_height = 135
     @randomize_color()
 
-  draw:(x,y) ->
+  position_at_x:() ->
+    return @x
+
+  position_at_y:() ->
+    return  640-@height
+
+  draw:(@x, @y) ->
     @context.fillStyle = @color
     @height = @base_height + y
-    @context.fillRect x, 640-@height, @width, @height
-    @build_windows(x, y)
+    @context.fillRect @position_at_x(), @position_at_y(), @width, @height
+    @build_windows(@position_at_x(), @position_at_y())
 
   build_windows:(x, y) ->
     times = Math.round (@height)/31
@@ -107,6 +113,7 @@ class Painter
 
     y = Math.floor(Math.random()*215)
     building.draw(x, y)
+    @buildings.push building
 
   draw_the_sun: ->
     sun = new Sun(@context)
@@ -115,11 +122,16 @@ class Painter
   set_color:(color) ->
     @color = color
 
+  pick_random_building: ->
+    random = Math.floor(Math.random()*@buildings.length)
+    return @buildings[random]
+
   draw_gorillas: ->
+    building = @pick_random_building()
     gorilla_1 = new Gorilla(@context)
-    gorilla_1.draw(130, 640-280)
+    gorilla_1.draw(building.position_at_x(), building.position_at_y())
     gorilla_2 = new Gorilla(@context)
-    gorilla_2.draw(835, 640-190)
+    #gorilla_2.draw(835, 640-190)
 
     gorilla_1.throw_banana()
 
@@ -133,8 +145,8 @@ class Gorilla
     image
 
   draw:(x, y) ->
-    @x = x
-    @y = y
+    @x = x+30
+    @y = y-40
     @context.drawImage(@image(), @x, @y, 40, 40)
 
   throw_banana: ->
