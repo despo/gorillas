@@ -140,16 +140,17 @@ class Banana
     @inity = initial_y
     @x = 0
     @y = 0
-    @g = -9.80665
+    @g = 9.8
 
-    F = 40
-    angle = 70
+    F = 13
+    angle = 45.0
+    radian = angle*Math.PI/180
 
-    @dx = F/Math.cos(angle)
-    @dy = F/Math.sin(angle)
+    @dx = F/Math.cos(radian)
+    @dy = F/Math.sin(radian)
 
   animate: ->
-    @draw_frame()
+    setTimeout (=> @draw_frame()), 150
 
   draw: ->
     @context.drawImage @image(), @initx+@x, @inity-@y
@@ -158,11 +159,11 @@ class Banana
     @draw()
     @calculate_projection()
 
-    setTimeout (=> @draw_frame()), 100
+    setTimeout (=> @draw_frame()), 150
 
   calculate_projection:() ->
     @x += @dx
-    @dy += @g
+    @dy -= @g
     @y += @dy
 
   image:() ->
