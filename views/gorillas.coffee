@@ -118,7 +118,7 @@ class Painter
       @clear()
       @draw_the_sun()
       @redraw_buildings()
-      @draw_gorillas()
+      @redraw_gorillas()
     else
       @empty = false
       @draw_the_sun()
@@ -157,9 +157,14 @@ class Painter
     building = @buildings[Math.floor(Math.random()*3)]
     @player_1 = new Gorilla(@context)
     @player_1.draw(building.position_at_x(), building.position_at_y())
+
     building = @buildings[Math.floor(Math.random()*6)+3]
     @player_2 = new Gorilla(@context)
     @player_2.draw(building.position_at_x(), building.position_at_y())
+
+  redraw_gorillas: ->
+    @player_1.redraw()
+    @player_2.redraw()
 
   throw_banana:(force, angle, player) ->
     if player == 2
@@ -173,8 +178,9 @@ class Painter
 
   animate_banana:(player) ->
     setTimeout (=>
-      this['player_' + player].throw_banana()
       @draw_scene()
+      this['player_' + player].throw_banana()
+
       @animate_banana(player)
       ),
       150
@@ -189,12 +195,15 @@ class Gorilla
     image
 
   draw:(x, y) ->
-    @x = x+30
-    @y = y-40
+    @x ||= x+30
+    @y ||= y-40
     @context.drawImage(@image(), @x, @y, 40, 40)
 
+  redraw:() ->
+    @draw(@x, @y)
+
   grab_banana:(force, angle) ->
-    @banana = new Banana(@context, @x+30, @y-30, force, angle)
+    @banana ||= new Banana(@context, @x+30, @y-30, force, angle)
 
   throw_banana: ->
     @banana.draw_frame()
