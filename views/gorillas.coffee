@@ -3,6 +3,7 @@ class Building
     @width = 70 + Math.floor(Math.random()*40)
     @base_height = 100
     @randomize_color()
+    @colissions = []
 
   position_at_x:() ->
     return @x
@@ -24,6 +25,8 @@ class Building
 
   redraw: ->
     @draw(@x, @y)
+    if @colissions.length > 0
+      @draw_colission(colission[0], colission[1]) for colission in @colissions
 
   build_windows:(x, y) ->
     rows = Math.round (@height)/31
@@ -49,6 +52,21 @@ class Building
     random = Math.floor(Math.random()*5)
     color = if random > 0 then colors[1] else colors[random]
     color
+
+  check_colission:(x, y) ->
+    if @position_at_y() < y && (@x < x && (@x + @width) > x)
+      @colissions.push [x, y]
+      @draw_colission(x, y)
+      return true
+    false
+
+  draw_colission:(x, y) ->
+    color = '#0000a0'
+    @context.fillStyle = color
+    @context.beginPath()
+    @context.arc x, y,  10 , 0, Math.PI*2, true
+    @context.closePath()
+    @context.fill()
 
 class Sun
   constructor:(context) ->
@@ -185,6 +203,9 @@ class Painter
   animate_banana:(player) ->
     @timeout = setTimeout (=>
       @draw_scene()
+      if @banana_has_collided(player.banana.x(), player.banana.y()) == true
+        @next_player_turn(player)
+        return
       if @within_boundaries(player.banana.x(), player.banana.y()) == false
         @next_player_turn(player)
         return
@@ -194,6 +215,12 @@ class Painter
       @animate_banana(player)
       ),
       150
+
+  banana_has_collided:(x, y) ->
+    for building in @buildings
+      return true if building.check_colission x, y
+    false
+
 
   next_player_turn:(player) ->
     next_player = if player.player_number == 2 then 1 else 2
