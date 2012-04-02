@@ -158,11 +158,11 @@ class Painter
 
   draw_gorillas: ->
     building = @buildings[Math.floor(Math.random()*3)]
-    @player_1 = new Gorilla(@context)
+    @player_1 = new Gorilla(@context, 1)
     @player_1.draw(building.middle_position(), building.position_at_y())
 
     building = @buildings[Math.floor(Math.random()*6)+3]
-    @player_2 = new Gorilla(@context)
+    @player_2 = new Gorilla(@context, 2)
     @player_2.draw(building.middle_position(), building.position_at_y())
 
   redraw_gorillas: ->
@@ -183,18 +183,25 @@ class Painter
   animate_banana:(player) ->
     @timeout = setTimeout (=>
       @draw_scene()
-      return if @within_boundaries(player.banana.x(), player.banana.y()) == false
+      if @within_boundaries(player.banana.x(), player.banana.y()) == false
+        @next_player_turn(player)
+        return
+
       player.throw_banana()
 
       @animate_banana(player)
       ),
       150
 
+  next_player_turn:(player) ->
+    next_player = if player.player_number == 2 then 1 else 2
+    window.show_player_field('player_'+next_player, 'angle')
+
   within_boundaries:(x, y) ->
     return false if x < 0 || x > @width || y > @height || y < 0
 
 class Gorilla
-  constructor:(@context) ->
+  constructor:(@context, @player_number) ->
     @width = 25
     @height = 25
 
@@ -289,8 +296,6 @@ $(document).ready ->
       window.clear_fields 'player_1'
       painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 1)
 
-      window.show_player_field 'player_2', 'angle'
-
   $('#player_2_angle').bind "keydown", (event) ->
     if event.keyCode == 13
       painter.clear_timeouts()
@@ -304,9 +309,6 @@ $(document).ready ->
       parameters = window.read_angle_and_velocity('player_2')
       window.clear_fields 'player_2'
       painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 2)
-
-      window.show_player_field 'player_1', 'angle'
-
 
   $('#player_1_angle').show()
   $('#player_1_angle').prev().show()
