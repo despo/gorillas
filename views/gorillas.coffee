@@ -36,19 +36,20 @@ class Building
       row++
 
   create_window:(x, y) ->
-    @randomize_window_color()
-    @context.fillStyle = @color
+    color = @randomize_window_color()
+    @context.fillStyle = color
     @context.fillRect x, y, 8, 16
 
   randomize_color:() ->
     colors = [ '#C0C0C0', '#800000', '#00FFFF' ]
     random = Math.floor(Math.random()*colors.length)
-    @color = colors[random]
+    @color ||= colors[random]
 
   randomize_window_color:() ->
     colors = [ '#808080', '#FFFF00' ]
     random = Math.floor(Math.random()*5)
-    @color = if random > 0 then colors[1] else colors[random]
+    color = if random > 0 then colors[1] else colors[random]
+    color
 
 class Sun
   constructor:(context) ->
