@@ -24,11 +24,11 @@ class Building
 
   build_windows:(x, y) ->
     rows = Math.round (@height)/31
-    window_positions = [ 10, 25, 40, 55, 70, 85 ]
+    windows_per_floor = Math.floor(@width/15)
     current_distance = 30
     total_height = 30
     for row in [0...rows]
-      @create_window x+position, 620+total_height-@height for position in window_positions
+      @create_window x+(position*15), 620+total_height-@height for position in [1...windows_per_floor]
       total_height += current_distance
 
   create_window:(x, y) ->
