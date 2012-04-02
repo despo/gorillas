@@ -211,8 +211,12 @@ window.show_player_field = (player, field) ->
   $('#'+player+'_'+field).focus()
 
 window.read_angle_and_velocity = (player) ->
-  angle: $('#player_1_angle').val(),
-  velocity: $('#player_1_velocity').val()
+  angle: $('#'+player+'_angle').val(),
+  velocity: $('#'+player+'_velocity').val()
+
+window.clear_fields = (player) ->
+  $('#'+player+'_angle').val('')
+  $('#'+player+'_velocity').val('')
 
 
 jQuery = $
@@ -233,14 +237,27 @@ $(document).ready ->
       window.hide_player_field 'player_1', 'velocity'
 
       parameters = window.read_angle_and_velocity('player_1')
-
+      window.clear_fields 'player_1'
       painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 1)
-      angle = $('#player_1_angle').val('')
-      velocity = $('#player_1_velocity').val('')
+
+      window.show_player_field 'player_2', 'angle'
+
+  $('#player_2_angle').bind "keydown", (event) ->
+    if event.keyCode == 13
+      window.hide_player_field 'player_2', 'angle'
+      window.show_player_field 'player_2', 'velocity'
+
+  $('#player_2_velocity').bind "keydown", (event) ->
+    if event.keyCode == 13
+      window.hide_player_field 'player_2', 'velocity'
+
+      parameters = window.read_angle_and_velocity('player_2')
+      window.clear_fields 'player_2'
+      painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 2)
 
       window.show_player_field 'player_1', 'angle'
 
 
   $('#player_1_angle').show()
-  $('#player_1_angle').focus()
   $('#player_1_angle').prev().show()
+  $('#player_1_angle').focus()
