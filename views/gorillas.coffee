@@ -127,7 +127,7 @@ class Painter
       @draw_gorillas()
 
   redraw_buildings:()->
-    for pos in [0...9]
+    for pos in [0...@buildings.length]
       @buildings[pos].redraw()
 
   draw_buildings:()->
