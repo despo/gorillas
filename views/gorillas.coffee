@@ -141,7 +141,19 @@ class Painter
     if player == 2
       angle = -angle
       force = -force
-    this['player_' + player].throw_banana(force, angle)
+    this['player_' + player].grab_banana(force, angle)
+    setTimeout (=>
+      @animate_banana(player)
+      ),
+      150
+
+  animate_banana:(player) ->
+    setTimeout (=>
+      this['player_' + player].throw_banana()
+      @draw_buildings()
+      @animate_banana(player)
+      ),
+      150
 
 class Gorilla
   constructor:(@context) ->
@@ -157,25 +169,21 @@ class Gorilla
     @y = y-40
     @context.drawImage(@image(), @x, @y, 40, 40)
 
-  throw_banana:(force, angle) ->
-    banana = new Banana(@context, @x+30, @y-30)
-    banana.throw(force, angle)
+  grab_banana:(force, angle) ->
+    @banana = new Banana(@context, @x+30, @y-30, force, angle)
+
+  throw_banana: ->
+    @banana.draw_frame()
 
 class Banana
-  constructor:(context, initial_x, initial_y) ->
+  constructor:(context, initial_x, initial_y, @force, @angle) ->
     @context = context
     @initx = initial_x
     @inity = initial_y
     @x = 0
     @y = 0
     @g = 9.8
-
-  throw:(force, angle) ->
-    @force = force
-    @angle = angle
     @calculate_initial_position()
-
-    setTimeout (=> @draw_frame()), 150
 
   draw: ->
     @context.drawImage @image(), @initx+@x, @inity-@y
@@ -183,8 +191,6 @@ class Banana
   draw_frame: ->
     @draw()
     @calculate_projection()
-
-    setTimeout (=> @draw_frame()), 150
 
   calculate_initial_position: ->
     radian = @angle*Math.PI/180
