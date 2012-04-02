@@ -1,6 +1,5 @@
 class Building
-  constructor:(context) ->
-    @context = context
+  constructor:(@context) ->
     @width = 90 + Math.floor(Math.random()*40)
     @base_height = 100
     @randomize_color()
@@ -147,8 +146,7 @@ class Painter
     sun = new Sun(@context)
     sun.draw()
 
-  set_color:(color) ->
-    @color = color
+  set_color:(@color) ->
 
   clear:() ->
     @canvas.width = @canvas.width
@@ -187,7 +185,6 @@ class Painter
 
 class Gorilla
   constructor:(@context) ->
-    @context = context
 
   image: ->
     image = new Image()
@@ -209,10 +206,7 @@ class Gorilla
     @banana.draw_frame()
 
 class Banana
-  constructor:(context, initial_x, initial_y, @force, @angle) ->
-    @context = context
-    @initx = initial_x
-    @inity = initial_y
+  constructor:(@context, @initx, @inity, @force, @angle) ->
     @x = 0
     @y = 0
     @g = 9.8
