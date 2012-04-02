@@ -1,6 +1,6 @@
 class Building
-  constructor:(@context) ->
-    @width = 90 + Math.floor(Math.random()*40)
+  constructor:(@context, @canvas_height) ->
+    @width = 70 + Math.floor(Math.random()*40)
     @base_height = 100
     @randomize_color()
 
@@ -8,10 +8,13 @@ class Building
     return @x
 
   position_at_y:() ->
-    return  640-@height
+    return  @canvas_height-@height
 
   end_position:() ->
     return @position_at_x()+@width
+
+  middle_position: ->
+    return @position_at_x() + (@end_position() - @position_at_x())/2
 
   draw:(@x, @y) ->
     @context.fillStyle = @color
@@ -104,6 +107,8 @@ class Painter
   constructor: ->
     @empty = true
     @canvas = document.getElementById "gorillas"
+    @width = @canvas.width
+    @height = @canvas.height
     @context = @canvas.getContext "2d"
     @color = '#00FFFF'
     @padding = 1
@@ -127,12 +132,12 @@ class Painter
 
   draw_buildings:()->
     position = 0
-    for [1...10]
+    while position < @width
       building = @draw_building(position)
       position = building.end_position() + @padding
 
   draw_building:(x) ->
-    building = new Building(@context)
+    building = new Building(@context, @height)
 
     y = Math.floor(Math.random()*300)
     building.draw(x, y)
@@ -154,11 +159,11 @@ class Painter
   draw_gorillas: ->
     building = @buildings[Math.floor(Math.random()*3)]
     @player_1 = new Gorilla(@context)
-    @player_1.draw(building.position_at_x(), building.position_at_y())
+    @player_1.draw(building.middle_position(), building.position_at_y())
 
     building = @buildings[Math.floor(Math.random()*6)+3]
     @player_2 = new Gorilla(@context)
-    @player_2.draw(building.position_at_x(), building.position_at_y())
+    @player_2.draw(building.middle_position(), building.position_at_y())
 
   redraw_gorillas: ->
     @player_1.redraw()
@@ -185,6 +190,8 @@ class Painter
 
 class Gorilla
   constructor:(@context) ->
+    @width = 25
+    @height = 25
 
   image: ->
     image = new Image()
@@ -192,15 +199,15 @@ class Gorilla
     image
 
   draw:(x, y) ->
-    @x ||= x+30
-    @y ||= y-40
-    @context.drawImage(@image(), @x, @y, 40, 40)
+    @x ||= x-@width/2
+    @y ||= y-@height
+    @context.drawImage(@image(), @x, @y, @width, @height)
 
   redraw:() ->
     @draw(@x, @y)
 
   grab_banana:(force, angle) ->
-    @banana = new Banana(@context, @x+30, @y-30, force, angle)
+    @banana = new Banana(@context, @x+@width, @y-@height, force, angle)
 
   throw_banana: ->
     @banana.draw_frame()
