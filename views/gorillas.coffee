@@ -23,16 +23,13 @@ class Building
     @draw(@x, @y)
 
   build_windows:(x, y) ->
-    times = Math.round (@height)/31
+    rows = Math.round (@height)/31
     window_positions = [ 10, 25, 40, 55, 70, 85 ]
     current_distance = 30
     total_height = 30
-    row = 1
-    loop
-      break if times < row
+    for row in [0...rows]
       @create_window x+position, 620+total_height-@height for position in window_positions
       total_height += current_distance
-      row++
 
   create_window:(x, y) ->
     color = @randomize_window_color()
