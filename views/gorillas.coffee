@@ -108,6 +108,12 @@ class Painter
     @padding = 1
     @buildings = []
 
+  draw_scene: ->
+    @clear()
+    @draw_the_sun()
+    @draw_buildings()
+    @draw_gorillas()
+
   draw_buildings:()->
     position = 0
     for [1...10]
@@ -128,6 +134,9 @@ class Painter
 
   set_color:(color) ->
     @color = color
+
+  clear:() ->
+    @canvas.width = @canvas.width
 
   draw_gorillas: ->
     building = @buildings[Math.floor(Math.random()*3)]
@@ -150,7 +159,7 @@ class Painter
   animate_banana:(player) ->
     setTimeout (=>
       this['player_' + player].throw_banana()
-      @draw_buildings()
+      @draw_scene()
       @animate_banana(player)
       ),
       150
@@ -228,10 +237,7 @@ window.clear_fields = (player) ->
 jQuery = $
 $(document).ready ->
   painter = new Painter
-  painter.draw_the_sun()
-  painter.draw_buildings()
-
-  painter.draw_gorillas()
+  painter.draw_scene()
 
   $('#player_1_angle').bind "keydown", (event) ->
     if event.keyCode == 13
