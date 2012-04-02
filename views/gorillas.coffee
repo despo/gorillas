@@ -20,6 +20,9 @@ class Building
     @context.fillRect @position_at_x(), @position_at_y(), @width, @height
     @build_windows(@position_at_x(), @position_at_y())
 
+  redraw: ->
+    @draw(@x, @y)
+
   build_windows:(x, y) ->
     times = Math.round (@height)/31
     window_positions = [ 10, 25, 40, 55, 70, 85 ]
@@ -102,6 +105,7 @@ class Sun
 
 class Painter
   constructor: ->
+    @empty = true
     @canvas = document.getElementById "gorillas"
     @context = @canvas.getContext "2d"
     @color = '#00FFFF'
@@ -109,10 +113,20 @@ class Painter
     @buildings = []
 
   draw_scene: ->
-    @clear()
-    @draw_the_sun()
-    @draw_buildings()
-    @draw_gorillas()
+    unless @empty
+      @clear()
+      @draw_the_sun()
+      @redraw_buildings()
+      @draw_gorillas()
+    else
+      @empty = false
+      @draw_the_sun()
+      @draw_buildings()
+      @draw_gorillas()
+
+  redraw_buildings:()->
+    for pos in [0...9]
+      @buildings[pos].redraw()
 
   draw_buildings:()->
     position = 0
