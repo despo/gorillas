@@ -150,18 +150,20 @@ class Painter
 
   set_color:(@color) ->
 
-  clear:() ->
+  clear: ->
     @canvas.width = @canvas.width
 
   clear_timeouts: ->
     clearTimeout(@timeout)
 
   draw_gorillas: ->
-    building = @buildings[Math.floor(Math.random()*3)]
+    building_1_position = Math.floor(Math.random()*@buildings.length/2)
+    building = @buildings[building_1_position]
     @player_1 = new Gorilla(@context, 1)
     @player_1.draw(building.middle_position(), building.position_at_y())
 
-    building = @buildings[Math.floor(Math.random()*6)+3]
+    building_2_position = Math.floor(Math.random()*(@buildings.length - 2 - building_1_position)) + building_1_position+1
+    building = @buildings[building_2_position]
     @player_2 = new Gorilla(@context, 2)
     @player_2.draw(building.middle_position(), building.position_at_y())
 
