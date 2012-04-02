@@ -148,6 +148,9 @@ class Painter
   clear:() ->
     @canvas.width = @canvas.width
 
+  clear_timeouts: ->
+    clearTimeout(@timeout)
+
   draw_gorillas: ->
     building = @buildings[Math.floor(Math.random()*3)]
     @player_1 = new Gorilla(@context)
@@ -166,13 +169,13 @@ class Painter
       angle = -angle
       force = -force
     this['player_' + player].grab_banana(force, angle)
-    setTimeout (=>
+    @timeout = setTimeout (=>
       @animate_banana(player)
       ),
       150
 
   animate_banana:(player) ->
-    setTimeout (=>
+    @timeout = setTimeout (=>
       @draw_scene()
       this['player_' + player].throw_banana()
 
@@ -197,7 +200,7 @@ class Gorilla
     @draw(@x, @y)
 
   grab_banana:(force, angle) ->
-    @banana ||= new Banana(@context, @x+30, @y-30, force, angle)
+    @banana = new Banana(@context, @x+30, @y-30, force, angle)
 
   throw_banana: ->
     @banana.draw_frame()
@@ -256,6 +259,7 @@ $(document).ready ->
 
   $('#player_1_angle').bind "keydown", (event) ->
     if event.keyCode == 13
+      painter.clear_timeouts()
       window.hide_player_field 'player_1', 'angle'
       window.show_player_field 'player_1', 'velocity'
 
@@ -271,6 +275,7 @@ $(document).ready ->
 
   $('#player_2_angle').bind "keydown", (event) ->
     if event.keyCode == 13
+      painter.clear_timeouts()
       window.hide_player_field 'player_2', 'angle'
       window.show_player_field 'player_2', 'velocity'
 
