@@ -201,11 +201,46 @@ class Banana
     image.src = 'images/banana.png'
     return image
 
+window.hide_player_field = (player, field) ->
+  $('#'+player+'_'+field).hide()
+  $('#'+player+'_'+field).prev().hide()
 
-window.onload = ->
-  @painter = new Painter
-  @painter.draw_the_sun()
-  @painter.draw_buildings()
+window.show_player_field = (player, field) ->
+  $('#'+player+'_'+field).show()
+  $('#'+player+'_'+field).prev().show()
+  $('#'+player+'_'+field).focus()
 
-  @painter.draw_gorillas()
-  @painter.throw_banana(30, 45, 1)
+window.read_angle_and_velocity = (player) ->
+  angle: $('#player_1_angle').val(),
+  velocity: $('#player_1_velocity').val()
+
+
+jQuery = $
+$(document).ready ->
+  painter = new Painter
+  painter.draw_the_sun()
+  painter.draw_buildings()
+
+  painter.draw_gorillas()
+
+  $('#player_1_angle').bind "keydown", (event) ->
+    if event.keyCode == 13
+      window.hide_player_field 'player_1', 'angle'
+      window.show_player_field 'player_1', 'velocity'
+
+  $('#player_1_velocity').bind "keydown", (event) ->
+    if event.keyCode == 13
+      window.hide_player_field 'player_1', 'velocity'
+
+      parameters = window.read_angle_and_velocity('player_1')
+
+      painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 1)
+      angle = $('#player_1_angle').val('')
+      velocity = $('#player_1_velocity').val('')
+
+      window.show_player_field 'player_1', 'angle'
+
+
+  $('#player_1_angle').show()
+  $('#player_1_angle').focus()
+  $('#player_1_angle').prev().show()
