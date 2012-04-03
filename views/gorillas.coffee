@@ -64,7 +64,7 @@ class Building
     color = '#0000a0'
     @context.fillStyle = color
     @context.beginPath()
-    @context.arc x, y,  10 , 0, Math.PI*2, true
+    @context.arc x, y,  15 , 0, Math.PI*2, true
     @context.closePath()
     @context.fill()
 
@@ -131,6 +131,7 @@ class Painter
     @color = '#00FFFF'
     @padding = 1
     @buildings = []
+    @f = 10
 
   draw_scene: ->
     unless @empty
@@ -196,28 +197,32 @@ class Painter
     player = this['player_' + player]
     player.grab_banana(force, angle)
     @timeout = setTimeout (=>
+      @start_time = 0
       @animate_banana(player)
       ),
-      150
+      @f
 
   animate_banana:(player) ->
     @timeout = setTimeout (=>
       @draw_scene()
-      if @banana_has_collided(player.banana.x(), player.banana.y()) == true
+      if @banana_has_collided(player) == true
         @next_player_turn(player)
         return
       if @within_boundaries(player.banana.x(), player.banana.y()) == false
         @next_player_turn(player)
         return
-
       player.throw_banana()
 
       @animate_banana(player)
       ),
-      150
+      @f
 
-  banana_has_collided:(x, y) ->
+  banana_has_collided:(player) ->
+    x = player.banana.x()
+    y = player.banana.y()
     for building in @buildings
+      return true if @player_2.check_colission x, y
+      return true if @player_1.check_colission x, y
       return true if building.check_colission x, y
     false
 
@@ -253,12 +258,20 @@ class Gorilla
   throw_banana: ->
     @banana.draw_frame()
 
+  check_colission:(x, y) ->
+    if (@y < y+@height ) && (x > @x && x < @x+@width)
+      alert "BOOM"
+      return true
+    false
+
+
 class Banana
   constructor:(@context, @initx, @inity, @force, @angle) ->
     @projection_x = 0
     @projection_y = 0
     @g = 9.8
     @calculate_initial_position()
+    @start_time = 0
 
   x: ->
     @initx + @projection_x
@@ -274,13 +287,14 @@ class Banana
     @calculate_projection()
 
   calculate_initial_position: ->
+    @start_time = @start_time + 0.1
     radian = @angle*Math.PI/180
-    @dx = @force/Math.cos(radian)
-    @dy = @force/Math.sin(radian)
+    @dx = @force*Math.cos(radian)
+    @dy = @force*Math.sin(radian)-@g*@start_time
 
   calculate_projection:() ->
+    @calculate_initial_position()
     @projection_x += @dx
-    @dy -= @g
     @projection_y += @dy
 
   image:() ->
@@ -323,7 +337,7 @@ $(document).ready ->
 
       parameters = window.read_angle_and_velocity('player_1')
       window.clear_fields 'player_1'
-      painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 1)
+      painter.throw_banana(parseInt(parameters.velocity), parseInt(parameters.angle), 1)
 
   $('#player_2_angle').bind "keydown", (event) ->
     if event.keyCode == 13
@@ -337,7 +351,7 @@ $(document).ready ->
 
       parameters = window.read_angle_and_velocity('player_2')
       window.clear_fields 'player_2'
-      painter.throw_banana(parseInt(parameters.angle), parseInt(parameters.velocity), 2)
+      painter.throw_banana(parseInt(parameters.velocity), parseInt(parameters.angle), 2)
 
   $('#player_1_angle').show()
   $('#player_1_angle').prev().show()
