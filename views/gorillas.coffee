@@ -259,7 +259,7 @@ class Gorilla
     @banana.draw_frame()
 
   check_colission:(x, y) ->
-    if (@y < y+@height ) && (x > @x && x < @x+@width)
+    if (@y < y+@height ) && (x > @x-@width && x < @x+@width)
       alert "BOOM"
       return true
     false
