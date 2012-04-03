@@ -140,7 +140,7 @@ class Painter
     @color = '#00FFFF'
     @padding = 1
     @buildings = []
-    @f = 10
+    @f = 0
 
   draw_scene: ->
     unless @empty
@@ -206,22 +206,35 @@ class Painter
     player = this['player_' + player]
     player.grab_banana(force, angle)
     @timeout = setTimeout (=>
-      @start_time = 0
-      @animate_banana(player)
+      @start_time = new Date()
+
+      @animate_banana(player, @start_time)
       ),
       @f
 
   animate_banana:(player) ->
     @timeout = setTimeout (=>
       @draw_scene()
+      if @banana_hit_gorilla(player) == true
+        x = @colission[0]
+        y = @colission[1]
+        @star(x+o, y) for o in [ -3...3 ]
+        @star(x-o, y) for o in [ -1...3 ]
+        @star(x, y+o) for o in [ -1...3 ]
+        @star(x, y-o) for o in [ -3...3 ]
+        return
+        @next_player_turn(player)
       if @banana_has_collided(player) == true
         @next_player_turn(player)
         return
       if @within_boundaries(player.banana.x(), player.banana.y()) == false
         @next_player_turn(player)
         return
-      player.throw_banana()
 
+      now = new Date()
+      time = now - @start_time
+
+      player.throw_banana(time/1000)
       @animate_banana(player)
       ),
       @f
@@ -230,11 +243,15 @@ class Painter
     x = player.banana.x()
     y = player.banana.y()
     for building in @buildings
-      return true if @player_2.check_colission x, y
-      return true if @player_1.check_colission x, y
       return true if building.check_colission x, y
     false
 
+  banana_hit_gorilla:(player) ->
+    x = player.banana.x()
+    y = player.banana.y()
+    if @player_2.check_colission(x, y) || @player_1.check_colission(x, y)
+      @colission = [x, y]
+      return true
 
   next_player_turn:(player) ->
     next_player = if player.player_number == 2 then 1 else 2
@@ -242,6 +259,26 @@ class Painter
 
   within_boundaries:(x, y) ->
     return false if x < 0 || x > @width || y > @height || y < 0
+
+  star:(x, y) ->
+    color = '#FFFF00'
+    @context.strokeStyle = color
+    @context.beginPath()
+    @context.lineWidth = 1
+    for z in [0...5]
+      @draw_ray(x, y, (360*z/72))
+      @context.stroke()
+
+
+  draw_ray:(x, y, a) ->
+    @context.moveTo x, y
+    coords = @coordinates(x, y, 20, a)
+    @context.lineTo coords.x, coords.y
+
+  coordinates:(x, y, d, a) ->
+    x: x + d * Math.cos(a),
+    y: y + d * Math.sin(a)
+
 
 class Gorilla
   constructor:(@context, @player_number) ->
@@ -264,12 +301,11 @@ class Gorilla
   grab_banana:(force, angle) ->
     @banana = new Banana(@context, @x+@width, @y-@height, force, angle)
 
-  throw_banana: ->
-    @banana.draw_frame()
+  throw_banana:(time) ->
+    @banana.draw_frame(time)
 
   check_colission:(x, y) ->
     if (@y < y+(@height) || @y < y-(@height)) && (x > @x-@width/2 && x < @x+@width/2)
-      alert "BOOM"
       return true
     false
 
@@ -291,12 +327,12 @@ class Banana
   draw: ->
     @context.drawImage @image(), @x(), @y()
 
-  draw_frame: ->
+  draw_frame:(time) ->
+    @start_time = time
     @draw()
     @calculate_projection()
 
   calculate_initial_position: ->
-    @start_time = @start_time + 0.1
     radian = @angle*Math.PI/180
     @dx = @force*Math.cos(radian)
     @dy = @force*Math.sin(radian)-@g*@start_time
