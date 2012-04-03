@@ -24,8 +24,15 @@ input {
   margin-top: 10px;
   display: inline-block;
   vertical-align: top;
-  width: 200px;
-  text-align: left
+  text-align: left;
+  width: 512px;
+}
+
+#player_1 {
+}
+
+#player_2 {
+  text-align: right;
 }
 
 label {
@@ -34,4 +41,17 @@ label {
 
 #player_1_angle, #player_2_angle, #player_1_velocity, #player_2_velocity, label {
   display: none;
+}
+
+.board {
+  width: 1024px;
+  height: 640px;
+  margin: 0 auto;
+}
+
+.players {
+  position: fixed;
+}
+
+canvas {
 }
