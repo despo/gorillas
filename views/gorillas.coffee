@@ -3,6 +3,7 @@ class Building
     @width = 70 + Math.floor(Math.random()*40)
     @base_height = 100
     @randomize_color()
+    @windows = []
     @colissions = []
 
   position_at_x:() ->
@@ -29,16 +30,24 @@ class Building
       @draw_colission(colission[0], colission[1]) for colission in @colissions
 
   build_windows:(x, y) ->
+    if @windows.length > 0
+      for window in @windows
+        @create_window window[0], window[1], window[2]
+      return
+
     rows = Math.round (@height)/31
     windows_per_floor = Math.floor(@width/15)
     current_distance = 30
     total_height = 30
     for row in [0...rows]
-      @create_window x+(position*15), 620+total_height-@height for position in [1...windows_per_floor]
+      for position in [1...windows_per_floor]
+        color = @randomize_window_color()
+        @create_window x+(position*15), 620+total_height-@height, color
+        @windows.push [x+(position*15), 620+total_height-@height, color]
+
       total_height += current_distance
 
-  create_window:(x, y) ->
-    color = @randomize_window_color()
+  create_window:(x, y, color) ->
     @context.fillStyle = color
     @context.fillRect x, y, 8, 16
 
@@ -54,7 +63,7 @@ class Building
     color
 
   check_colission:(x, y) ->
-    if @position_at_y() < y && (@x < x && (@x + @width) > x)
+    if @position_at_y() < y && (@x < x-10 && (@x + @width) > x-10)
       @colissions.push [x, y]
       @draw_colission(x, y)
       return true
