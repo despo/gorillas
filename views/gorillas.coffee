@@ -258,7 +258,7 @@ class Painter
     window.show_player_field('player_'+next_player, 'angle')
 
   within_boundaries:(x, y) ->
-    return false if x < 0 || x > @width || y > @height || y < 0
+    return false if x < 0 || x > @width || y > @height
 
   star:(x, y) ->
     color = '#FFFF00'
