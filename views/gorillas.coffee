@@ -26,6 +26,8 @@ class Building
 
   redraw: ->
     @draw(@x, @y)
+
+  redraw_colissions:() ->
     if @colissions.length > 0
       @draw_colission(colission[0], colission[1]) for colission in @colissions
 
@@ -63,7 +65,7 @@ class Building
     color
 
   check_colission:(x, y) ->
-    if @position_at_y() < y && (@x < x-10 && (@x + @width) > x-10)
+    if @position_at_y() <= y && (x > @x && x < @x+@width)
       @colissions.push [x, y]
       @draw_colission(x, y)
       return true
@@ -147,6 +149,7 @@ class Painter
       @clear()
       @draw_the_sun()
       @redraw_buildings()
+      @redraw_colissions()
       @redraw_gorillas()
     else
       @empty = false
@@ -154,9 +157,13 @@ class Painter
       @draw_buildings()
       @draw_gorillas()
 
-  redraw_buildings:()->
+  redraw_buildings: ->
     for pos in [0...@buildings.length]
       @buildings[pos].redraw()
+
+  redraw_colissions: ->
+    for pos in [0...@buildings.length]
+      @buildings[pos].redraw_colissions()
 
   draw_buildings:()->
     position = 0
@@ -216,12 +223,6 @@ class Painter
     @timeout = setTimeout (=>
       @draw_scene()
       if @banana_hit_gorilla(player) == true
-        x = @colission[0]
-        y = @colission[1]
-        @star(x+o, y) for o in [ -3...3 ]
-        @star(x-o, y) for o in [ -1...3 ]
-        @star(x, y+o) for o in [ -1...3 ]
-        @star(x, y-o) for o in [ -3...3 ]
         return
         @next_player_turn(player)
       if @banana_has_collided(player) == true
@@ -250,6 +251,13 @@ class Painter
     x = player.banana.x()
     y = player.banana.y()
     if @player_2.check_colission(x, y) || @player_1.check_colission(x, y)
+      dead_player = if @player_2.dead == true then @player_2 else @player_1
+      x = dead_player.x+dead_player.width/2
+      y = dead_player.y
+      @star(x, y) for o in [ -3...3 ]
+      @star(x, y) for o in [ -1...3 ]
+      @star(x, y) for o in [ -1...3 ]
+      @star(x, y) for o in [ -3...3 ]
       @colission = [x, y]
       return true
 
@@ -305,10 +313,10 @@ class Gorilla
     @banana.draw_frame(time)
 
   check_colission:(x, y) ->
-    if (@y < y+(@height) || @y < y-(@height)) && (x > @x-@width/2 && x < @x+@width/2)
+    if (@y <= y ) && (x > @x-@width/2 &&  x < @x+@width/2)
+      @dead = true
       return true
     false
-
 
 class Banana
   constructor:(@context, @initx, @inity, @force, @angle) ->
@@ -317,6 +325,7 @@ class Banana
     @g = 9.8
     @calculate_initial_position()
     @start_time = 0
+    @wind = 15
 
   x: ->
     @initx + @projection_x
