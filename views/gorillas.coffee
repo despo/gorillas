@@ -139,6 +139,7 @@ class Painter
     @width = @canvas.width
     @height = @canvas.height
     @context = @canvas.getContext "2d"
+    @winner = []
     @color = '#00FFFF'
     @padding = 1
     @buildings = []
@@ -153,6 +154,7 @@ class Painter
       @redraw_gorillas()
     else
       @empty = false
+      @clear()
       @draw_the_sun()
       @draw_buildings()
       @draw_gorillas()
@@ -220,17 +222,16 @@ class Painter
       @f
 
   update_score: ->
-    console.log @player_1.games_won()
-    $('#score label').text(@player_1.games_won() + '>Score<' + @player_2.games_won())
+    console.log @winner
+    player_1 = @winner.filter((x) => x == 1).length
+    player_2 = @winner.filter((x) => x == 2).length
+
+    $('#score label').text(player_1 + '>Score<' + player_2)
 
   animate_banana:(player) ->
     @timeout = setTimeout (=>
       @draw_scene()
       if @banana_hit_gorilla(player) == true
-        @update_score()
-        @player_1.reset_state()
-        @player_2.reset_state()
-        @next_player_turn(player)
         return
       if @banana_has_collided(player) == true
         @next_player_turn(player)
@@ -260,7 +261,8 @@ class Painter
     if @player_2.check_colission(x, y) || @player_1.check_colission(x, y)
       dead_player = if @player_2.dead == true then @player_2 else @player_1
       winner = if @player_2.dead == false then @player_2 else @player_1
-      winner.win()
+      @winner.push winner.player_number
+      @update_score()
       @timeout = setTimeout (=>
         @start_time = new Date()
         winner.animate = true
@@ -278,14 +280,20 @@ class Painter
 
   animate_win:(player, @start_time) ->
     @timeout = setTimeout (=>
-      return unless player.animate == true and player.animations < 10
+      unless player.animate == true and player.animations < 12
+        @empty = true
+        @buildings = []
+        @draw_scene()
+        @next_player_turn(player)
+        return
+
       now = new Date()
       time = now - @start_time
       @draw_scene()
       player.animate_win()
       @animate_win(player, @start_time)
       ),
-      750
+      900
 
   next_player_turn:(player) ->
     next_player = if player.player_number == 2 then 1 else 2
@@ -349,17 +357,6 @@ class Gorilla
       @dead = true
       return true
     false
-
-  win: ->
-    @wins++
-
-  games_won: ->
-    @wins
-
-  reset_state: ->
-    @animations = 0
-    @dead = false
-    @aniamate = false
 
   right_hand_image: ->
     image = new Image()
