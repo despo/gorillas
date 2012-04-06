@@ -290,8 +290,8 @@ class Painter
 
 class Gorilla
   constructor:(@context, @player_number) ->
-    @width = 25
-    @height = 25
+    @width = 40
+    @height = 40
 
   image: ->
     image = new Image()
