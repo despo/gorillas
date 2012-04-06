@@ -37,9 +37,9 @@ class Building
         @create_window window[0], window[1], window[2]
       return
 
-    rows = Math.round (@height)/31
+    rows = Math.round (@height)/26
     windows_per_floor = Math.floor(@width/15)
-    current_distance = 30
+    current_distance = 25
     total_height = 30
     for row in [0...rows]
       for position in [1...windows_per_floor]
