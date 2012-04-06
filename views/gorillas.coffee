@@ -443,11 +443,11 @@ $(document).ready ->
   $('#player_1_angle').bind "keydown", (event) ->
     if event.keyCode == 13
       painter.clear_timeouts()
-      window.hide_player_field 'player_1', 'angle'
       window.show_player_field 'player_1', 'velocity'
 
   $('#player_1_velocity').bind "keydown", (event) ->
     if event.keyCode == 13
+      window.hide_player_field 'player_1', 'angle'
       window.hide_player_field 'player_1', 'velocity'
 
       parameters = window.read_angle_and_velocity('player_1')
@@ -457,11 +457,11 @@ $(document).ready ->
   $('#player_2_angle').bind "keydown", (event) ->
     if event.keyCode == 13
       painter.clear_timeouts()
-      window.hide_player_field 'player_2', 'angle'
       window.show_player_field 'player_2', 'velocity'
 
   $('#player_2_velocity').bind "keydown", (event) ->
     if event.keyCode == 13
+      window.hide_player_field 'player_2', 'angle'
       window.hide_player_field 'player_2', 'velocity'
 
       parameters = window.read_angle_and_velocity('player_2')
