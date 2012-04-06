@@ -143,7 +143,7 @@ class Painter
     @color = '#00FFFF'
     @padding = 1
     @buildings = []
-    @f = 0
+    @f = 10
 
   draw_scene: ->
     unless @empty
@@ -222,7 +222,6 @@ class Painter
       @f
 
   update_score: ->
-    console.log @winner
     player_1 = @winner.filter((x) => x == 1).length
     player_2 = @winner.filter((x) => x == 2).length
 
@@ -243,7 +242,7 @@ class Painter
       now = new Date()
       time = now - @start_time
 
-      player.throw_banana(time/1000)
+      player.throw_banana(time/1000, time)
       @animate_banana(player)
       ),
       @f
@@ -266,6 +265,8 @@ class Painter
       @timeout = setTimeout (=>
         @start_time = new Date()
         winner.animate = true
+        @draw_scene()
+        player.animate_win()
         @animate_win(winner, @start_time)
         ),
         @f
@@ -293,7 +294,7 @@ class Painter
       player.animate_win()
       @animate_win(player, @start_time)
       ),
-      900
+      800
 
   next_player_turn:(player) ->
     next_player = if player.player_number == 2 then 1 else 2
@@ -333,23 +334,46 @@ class Gorilla
     @right_hand = false
 
   image: ->
-    image = new Image()
-    image.src = 'images/gorilla.png'
-    image
+    @current_image ||= @still_state()
+    @current_image
+
+  reset_image: ->
+    @current_image = @still_state()
+
+  use_right_hand_image: ->
+    @current_image = @right_hand_image()
+
+  use_left_hand_image: ->
+    @current_image = @left_hand_image()
 
   draw:(x, y) ->
+    if @dead == true
+      @draw_as_dead()
+      return
     @x ||= x-@width/2
     @y ||= y-@height
     @context.drawImage(@image(), @x, @y, @width, @height)
+    @reset_image()
 
   redraw:() ->
-    @draw(@x, @y) unless @animate == true
+    @draw(@x, @y)
 
   grab_banana:(force, angle) ->
-    @banana = new Banana(@context, @x+@width, @y-@height, force, angle)
+    @banana = new Banana(@context, @x, @y-@height, force, angle)
 
-  throw_banana:(time) ->
-    @context.drawImage(@right_hand_image(), @x, @y, @width, @height)
+  draw_as_dead: ->
+    @context.fillStyle = '#0000b0'
+    @context.beginPath()
+    @context.arc @x, @y, @width, 0, Math.PI*2, true
+    @context.closePath()
+    @context.fill()
+
+  throw_banana:(time, just_thrown) ->
+    if @player_number == 2 and just_thrown == true
+      @use_left_hand_image()
+    else if just_thrown == true
+      @use_right_hand_image()
+    @context.drawImage(@image(), @x, @y, @width, @height)
     @banana.draw_frame(time)
 
   check_colission:(x, y) ->
@@ -357,6 +381,11 @@ class Gorilla
       @dead = true
       return true
     false
+
+  still_state: ->
+    image = new Image()
+    image.src = 'images/gorilla.png'
+    image
 
   right_hand_image: ->
     image = new Image()
@@ -372,8 +401,8 @@ class Gorilla
     @right_hand = !@right_hand
     @animations++
     if @right_hand == true
-      return @context.drawImage(@right_hand_image(), @x, @y, @width, @height)
-    @context.drawImage(@left_hand_image(), @x, @y, @width, @height)
+      return @use_left_hand_image()
+    return @use_right_hand_image()
 
 
 class Banana
