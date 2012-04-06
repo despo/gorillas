@@ -2,8 +2,8 @@ body {
  background-color:  #0000a0;
  margin: 0 auto;
  text-align: center;
- font-family:  courier, serif;
- font-size: 20px;
+ font-family: "andale mono","monotype.com",monaco,"courier new",courier,monospace;
+ font-size: 16px;
  color: #fff;
 }
 
@@ -39,7 +39,7 @@ label {
   font-size: 16px;
 }
 
-#player_1_angle, #player_2_angle, #player_1_velocity, #player_2_velocity, label {
+#player_1_angle, #player_2_angle, #player_1_velocity, #player_2_velocity, #player_1 label, #player_2 label {
   display: none;
 }
 
@@ -53,5 +53,15 @@ label {
   position: absolute;
 }
 
-canvas {
+.score .player_1, .score .player_2 {
+  background-color:  #0000a0;
+}
+
+#score {
+  margin-top: -50px;
+}
+
+#score label {
+  background-color:  #0000a0;
+  display: inline-block;
 }
