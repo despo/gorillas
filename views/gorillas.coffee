@@ -146,16 +146,14 @@ class Painter
     @f = 10
 
   draw_scene: ->
+    @clear()
+    @draw_the_sun()
     unless @empty
-      @clear()
-      @draw_the_sun()
       @redraw_buildings()
       @redraw_colissions()
       @redraw_gorillas()
     else
       @empty = false
-      @clear()
-      @draw_the_sun()
       @draw_buildings()
       @draw_gorillas()
 
