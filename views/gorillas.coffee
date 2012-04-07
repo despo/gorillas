@@ -11,6 +11,24 @@ class Shape
     @context.closePath()
     @context.fill()
 
+  draw_ellipse:(x, y, w, h) ->
+    kappa = .5522848;
+    ox = (w / 2) * kappa
+    oy = (h / 2) * kappa
+    xe = x + w
+    ye = y + h
+    xm = x + w / 2
+    ym = y + h / 2
+
+    @context.beginPath();
+    @context.moveTo(x, ym);
+    @context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    @context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    @context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    @context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    @context.closePath();
+    @context.fill()
+
 class Building
   constructor:(@context, @canvas_height) ->
     @width = 70 + Math.floor(Math.random()*40)
@@ -87,25 +105,9 @@ class Building
   draw_colission:(x, y) ->
     color = '#0000a0'
     @context.fillStyle = color
-    @draw_ellipse(x, y, 35, 25)
+    shape = new Shape(@context)
+    shape.draw_ellipse(x, y, 35, 25)
 
-  draw_ellipse:(x, y, w, h) ->
-    kappa = .5522848;
-    ox = (w / 2) * kappa
-    oy = (h / 2) * kappa
-    xe = x + w
-    ye = y + h
-    xm = x + w / 2
-    ym = y + h / 2
-
-    @context.beginPath();
-    @context.moveTo(x, ym);
-    @context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    @context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    @context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    @context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    @context.closePath();
-    @context.fill()
 class Sun
   constructor:(context) ->
     @mouth = true
@@ -383,7 +385,8 @@ class Gorilla
 
   draw_as_dead: ->
     @context.fillStyle = '#0000a0'
-    @draw_ellipse(@x-@width, @y, 2.5*@explosion_width, @explosion_height)
+    shape = new Shape(@context)
+    shape.draw_ellipse(@x-@width, @y, 2.5*@explosion_width, @explosion_height)
 
   animate_colission:() ->
     @context.fillStyle = '#F50B0B'
@@ -392,27 +395,8 @@ class Gorilla
     width = @explosion_width
     height = @explosion_height
 
-    @draw_ellipse(@x-@width, @y, 2.5*width, height)
-
-
-  draw_ellipse:(x, y, w, h) ->
-    kappa = .5522848;
-    ox = (w / 2) * kappa
-    oy = (h / 2) * kappa
-    xe = x + w
-    ye = y + h
-    xm = x + w / 2
-    ym = y + h / 2
-
-    @context.beginPath();
-    @context.moveTo(x, ym);
-    @context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    @context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    @context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    @context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    @context.closePath();
-    @context.fill()
-
+    shape = new Shape(@context)
+    shape.draw_ellipse(@x-@width, @y, 2.5*width, height)
 
   throw_banana:(time, just_thrown) ->
     if @player_number == 2 and just_thrown == true
