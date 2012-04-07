@@ -1,3 +1,13 @@
+class Shape
+  constructor:(@context) ->
+
+  draw_circle:(x, y, width, color) ->
+    @context.fillStyle = color
+    @context.beginPath()
+    @context.arc x, y, width, 0, Math.PI*2, true
+    @context.closePath()
+    @context.fill()
+
 class Building
   constructor:(@context, @canvas_height) ->
     @width = 70 + Math.floor(Math.random()*40)
@@ -105,24 +115,20 @@ class Sun
     1024/2
 
   draw:() ->
-    @draw_circle()
+    @draw_body()
     @rays()
     @eyes()
     @smile()
 
-  draw_circle:() ->
-    @context.fillStyle = @color
-    @context.beginPath()
-    @context.arc @position(), @y, @width, 0, Math.PI*2, true
-    @context.closePath()
-    @context.fill()
+  draw_body:() ->
+    shape = new Shape(@context)
+    shape.draw_circle(@position(), @y, @width, @color)
 
   eyes:() ->
-    @context.fillStyle = '#000000'
-    @context.beginPath()
-    @context.arc @position()-10, @y-10, 5, 0, Math.PI*2,  true
-    @context.arc @position()+10, @y-10, 5, 0, Math.PI*2,  true
-    @context.fill()
+    shape = new Shape(@context)
+    color = '#000000'
+    shape.draw_circle(@position()-10, @y-10, 5, color)
+    shape.draw_circle(@position()+10, @y-10, 5, color)
 
   smile:() ->
     @context.strokeStyle = '#000000'
