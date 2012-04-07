@@ -1,8 +1,11 @@
 class Shape
   constructor:(@context) ->
 
-  draw_circle:(x, y, width, color) ->
-    @context.fillStyle = color
+  set_color:(color) ->
+    @color = color
+
+  draw_circle:(x, y, width) ->
+    @context.fillStyle = @color
     @context.beginPath()
     @context.arc x, y, width, 0, Math.PI*2, true
     @context.closePath()
@@ -121,14 +124,15 @@ class Sun
     @smile()
 
   draw_body:() ->
-    shape = new Shape(@context)
-    shape.draw_circle(@position(), @y, @width, @color)
+    shape = new Shape @context
+    shape.set_color @color
+    shape.draw_circle @position(), @y, @width
 
   eyes:() ->
     shape = new Shape(@context)
-    color = '#000000'
-    shape.draw_circle(@position()-10, @y-10, 5, color)
-    shape.draw_circle(@position()+10, @y-10, 5, color)
+    shape.set_color '#000000'
+    shape.draw_circle @position()-10, @y-10, 5
+    shape.draw_circle @position()+10, @y-10, 5
 
   smile:() ->
     @context.strokeStyle = '#000000'
