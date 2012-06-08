@@ -1,3 +1,34 @@
+class Shape
+  constructor:(@context) ->
+
+  set_color:(color) ->
+    @color = color
+
+  draw_circle:(x, y, width) ->
+    @context.fillStyle = @color
+    @context.beginPath()
+    @context.arc x, y, width, 0, Math.PI*2, true
+    @context.closePath()
+    @context.fill()
+
+  draw_ellipse:(x, y, w, h) ->
+    kappa = .5522848;
+    ox = (w / 2) * kappa
+    oy = (h / 2) * kappa
+    xe = x + w
+    ye = y + h
+    xm = x + w / 2
+    ym = y + h / 2
+
+    @context.beginPath();
+    @context.moveTo(x, ym);
+    @context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    @context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    @context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    @context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    @context.closePath();
+    @context.fill()
+
 class Building
   constructor:(@context, @canvas_height) ->
     @width = 70 + Math.floor(Math.random()*40)
@@ -37,9 +68,9 @@ class Building
         @create_window window[0], window[1], window[2]
       return
 
-    rows = Math.round (@height)/31
+    rows = Math.round (@height)/26
     windows_per_floor = Math.floor(@width/15)
-    current_distance = 30
+    current_distance = 25
     total_height = 30
     for row in [0...rows]
       for position in [1...windows_per_floor]
@@ -65,7 +96,7 @@ class Building
     color
 
   check_colission:(x, y) ->
-    if @position_at_y() <= y && (x > @x && x < @x+@width)
+    if @position_at_y()-10 <= y && (x > @x-10 && x < @x+@width-10)
       @colissions.push [x, y]
       @draw_colission(x, y)
       return true
@@ -74,10 +105,8 @@ class Building
   draw_colission:(x, y) ->
     color = '#0000a0'
     @context.fillStyle = color
-    @context.beginPath()
-    @context.arc x, y,  15 , 0, Math.PI*2, true
-    @context.closePath()
-    @context.fill()
+    shape = new Shape(@context)
+    shape.draw_ellipse(x, y, 35, 25)
 
 class Sun
   constructor:(context) ->
@@ -91,24 +120,21 @@ class Sun
     1024/2
 
   draw:() ->
-    @draw_circle()
+    @draw_body()
     @rays()
     @eyes()
     @smile()
 
-  draw_circle:() ->
-    @context.fillStyle = @color
-    @context.beginPath()
-    @context.arc @position(), @y, @width, 0, Math.PI*2, true
-    @context.closePath()
-    @context.fill()
+  draw_body:() ->
+    shape = new Shape @context
+    shape.set_color @color
+    shape.draw_circle @position(), @y, @width
 
   eyes:() ->
-    @context.fillStyle = '#000000'
-    @context.beginPath()
-    @context.arc @position()-10, @y-10, 5, 0, Math.PI*2,  true
-    @context.arc @position()+10, @y-10, 5, 0, Math.PI*2,  true
-    @context.fill()
+    shape = new Shape(@context)
+    shape.set_color '#000000'
+    shape.draw_circle @position()-10, @y-10, 5
+    shape.draw_circle @position()+10, @y-10, 5
 
   smile:() ->
     @context.strokeStyle = '#000000'
@@ -146,16 +172,14 @@ class Painter
     @f = 10
 
   draw_scene: ->
+    @clear()
+    @draw_the_sun()
     unless @empty
-      @clear()
-      @draw_the_sun()
       @redraw_buildings()
       @redraw_colissions()
       @redraw_gorillas()
     else
       @empty = false
-      @clear()
-      @draw_the_sun()
       @draw_buildings()
       @draw_gorillas()
 
@@ -261,6 +285,10 @@ class Painter
       dead_player = if @player_2.dead == true then @player_2 else @player_1
       winner = if @player_2.dead == false then @player_2 else @player_1
       @winner.push winner.player_number
+      @timeout = setTimeout (=>
+        @animate_colission(dead_player)
+      ),
+      0
       @update_score()
       @timeout = setTimeout (=>
         @start_time = new Date()
@@ -270,14 +298,16 @@ class Painter
         @animate_win(winner, @start_time)
         ),
         @f
-      x = dead_player.x+dead_player.width/2
-      y = dead_player.y
-      @star(x, y) for o in [ -3...3 ]
-      @star(x, y) for o in [ -1...3 ]
-      @star(x, y) for o in [ -1...3 ]
-      @star(x, y) for o in [ -3...3 ]
-      @colission = [x, y]
       return true
+
+  animate_colission:(player) ->
+    @timeout = setTimeout (=>
+      @start_time = new Date()
+      player.animate_colission()
+      @animate_colission(player) unless player.explosion_width > player.width
+      ),
+      0
+
 
   animate_win:(player, @start_time) ->
     @timeout = setTimeout (=>
@@ -303,16 +333,6 @@ class Painter
   within_boundaries:(x, y) ->
     return false if x < 0 || x > @width || y > @height
 
-  star:(x, y) ->
-    color = '#FFFF00'
-    @context.strokeStyle = color
-    @context.beginPath()
-    @context.lineWidth = 1
-    for z in [0...5]
-      @draw_ray(x, y, (360*z/72))
-      @context.stroke()
-
-
   draw_ray:(x, y, a) ->
     @context.moveTo x, y
     coords = @coordinates(x, y, 20, a)
@@ -332,6 +352,8 @@ class Gorilla
     @animate = false
     @animations = 0
     @right_hand = false
+    @explosion_width = @width
+    @explosion_height = @height
 
   image: ->
     @current_image ||= @still_state()
@@ -362,11 +384,19 @@ class Gorilla
     @banana = new Banana(@context, @x, @y-@height, force, angle)
 
   draw_as_dead: ->
-    @context.fillStyle = '#0000b0'
-    @context.beginPath()
-    @context.arc @x, @y, @width, 0, Math.PI*2, true
-    @context.closePath()
-    @context.fill()
+    @context.fillStyle = '#0000a0'
+    shape = new Shape(@context)
+    shape.draw_ellipse(@x-@width, @y, 2.5*@explosion_width, @explosion_height)
+
+  animate_colission:() ->
+    @context.fillStyle = '#F50B0B'
+    @explosion_width += 20
+    @explosion_height += 20
+    width = @explosion_width
+    height = @explosion_height
+
+    shape = new Shape(@context)
+    shape.draw_ellipse(@x-@width, @y, 2.5*width, height)
 
   throw_banana:(time, just_thrown) ->
     if @player_number == 2 and just_thrown == true
@@ -409,6 +439,7 @@ class Banana
   constructor:(@context, @initx, @inity, @force, @angle) ->
     @projection_x = 0
     @projection_y = 0
+    @scale = 0.1
     @g = 9.8
     @calculate_initial_position()
     @start_time = 0
@@ -435,8 +466,8 @@ class Banana
 
   calculate_projection:() ->
     @calculate_initial_position()
-    @projection_x += @dx
-    @projection_y += @dy
+    @projection_x += @dx*@scale
+    @projection_y += @dy*@scale
 
   image:() ->
     image = new Image()
