@@ -181,7 +181,10 @@ class Painter
     else
       @empty = false
       @draw_buildings()
-      @draw_gorillas()
+      setTimeout (=>
+        @draw_gorillas()
+      ),
+      500
 
   redraw_buildings: ->
     for pos in [0...@buildings.length]
