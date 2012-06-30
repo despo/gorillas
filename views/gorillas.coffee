@@ -494,6 +494,9 @@ window.clear_fields = (player) ->
   $('#'+player+'_angle').val('')
   $('#'+player+'_velocity').val('')
 
+window.is_field_visible = (player, field) ->
+  $('#'+player+'_'+field).is(":visible")
+
 
 jQuery = $
 $(document).ready ->
@@ -506,9 +509,12 @@ $(document).ready ->
       window.show_player_field 'player_1', 'velocity'
 
   $('#player_1_velocity').bind "keydown", (event) ->
-    if event.keyCode == 13
+    if event.keyCode == 13 && window.is_field_visible  'player_1', 'angle'
+
+      console.log "----------"
       window.hide_player_field 'player_1', 'angle'
       window.hide_player_field 'player_1', 'velocity'
+
 
       parameters = window.read_angle_and_velocity('player_1')
       parameters.velocity = 0 unless parameters.velocity > 0
@@ -522,7 +528,7 @@ $(document).ready ->
       window.show_player_field 'player_2', 'velocity'
 
   $('#player_2_velocity').bind "keydown", (event) ->
-    if event.keyCode == 13
+    if event.keyCode == 13 and window.is_field_visible 'player_2', 'angle'
       window.hide_player_field 'player_2', 'angle'
       window.hide_player_field 'player_2', 'velocity'
 
