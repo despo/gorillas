@@ -508,6 +508,8 @@ $(document).ready ->
       window.hide_player_field 'player_1', 'velocity'
 
       parameters = window.read_angle_and_velocity('player_1')
+      parameters.velocity = 0 unless parameters.velocity > 0
+      parameters.angle = 0 unless parameters.angle > 0
       window.clear_fields 'player_1'
       painter.throw_banana(parseInt(parameters.velocity), parseInt(parameters.angle), 1)
 
