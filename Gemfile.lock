@@ -25,7 +25,7 @@ GEM
       rubyzip
     launchy (2.1.0)
       addressable (~> 2.2.6)
-    libv8 (3.3.10.4)
+    libv8 (3.11.8.17)
     mime-types (1.18)
     multi_json (1.1.0)
     netrc (0.7.1)
@@ -34,6 +34,7 @@ GEM
       rack
     rack-test (0.6.1)
       rack (>= 1.0)
+    ref (1.0.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rubyzip (0.9.6.1)
@@ -50,8 +51,9 @@ GEM
       tilt (~> 1.3)
     sinatra-reloader (1.0)
       sinatra-contrib
-    therubyracer (0.10.0)
-      libv8 (~> 3.3.10)
+    therubyracer (0.11.4)
+      libv8 (~> 3.11.8.12)
+      ref
     thor (0.14.6)
     tilt (1.3.3)
 
@@ -63,6 +65,7 @@ DEPENDENCIES
   guard-coffeescript
   haml
   heroku
+  libv8 (~> 3.11.8)
   sinatra
   sinatra-reloader
-  therubyracer
+  therubyracer (~> 0.11.0beta5)
