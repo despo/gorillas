@@ -447,6 +447,10 @@ class Banana
     @calculate_initial_position()
     @start_time = 0
     @wind = 15
+    @rotation = 0
+    @img = @image()
+    @img_w_div_2 = @img.width / 2.0
+    @img_h_div_2 = @img.height / 2.0
 
   x: ->
     @initx + @projection_x
@@ -455,10 +459,19 @@ class Banana
     @inity - @projection_y
 
   draw: ->
-    @context.drawImage @image(), @x(), @y()
+    x = @x()
+    y = @y()
+    @context.translate x, y
+    @context.translate @img_w_div_2, @img_h_div_2 
+    @context.rotate(@rotation)
+    @context.drawImage @img, -@img_w_div_2, -@img_h_div_2
+    @context.rotate(-@rotation)
+    @context.translate -@img_w_div_2, -@img_h_div_2
+    @context.translate x, y
 
   draw_frame:(time) ->
     @start_time = time
+    @rotation = time * 10 
     @draw()
     @calculate_projection()
 
