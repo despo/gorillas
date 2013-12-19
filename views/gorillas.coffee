@@ -35,7 +35,7 @@ class Building
     @base_height = 100
     @randomize_color()
     @windows = []
-    @colissions = []
+    @collisions = []
 
   position_at_x:() ->
     return @x
@@ -58,9 +58,9 @@ class Building
   redraw: ->
     @draw(@x, @y)
 
-  redraw_colissions:() ->
-    if @colissions.length > 0
-      @draw_colission(colission[0], colission[1]) for colission in @colissions
+  redraw_collisions:() ->
+    if @collisions.length > 0
+      @draw_collision(collision[0], collision[1]) for collision in @collisions
 
   build_windows:(x, y) ->
     if @windows.length > 0
@@ -95,26 +95,27 @@ class Building
     color = if random > 0 then colors[1] else colors[random]
     color
 
-  check_colission:(x, y) ->
+  check_collision:(x, y) ->
     if @position_at_y()-10 <= y && (x > @x-10 && x < @x+@width-10)
-      @colissions.push [x, y]
-      @draw_colission(x, y)
+      @collisions.push [x, y]
+      @draw_collision(x, y)
       return true
     false
 
-  draw_colission:(x, y) ->
+  draw_collision:(x, y) ->
     color = '#0000a0'
     @context.fillStyle = color
     shape = new Shape(@context)
     shape.draw_ellipse(x, y, 35, 25)
 
 class Sun
-  constructor:(context) ->
+  constructor:(context, smiling=false) ->
     @mouth = true
     @context = context
     @color = '#FFFF00'
     @width = 40
     @y = 100
+    @smiling = smiling
 
   position: ->
     1024/2
@@ -139,7 +140,10 @@ class Sun
   smile:() ->
     @context.strokeStyle = '#000000'
     @context.beginPath()
-    @context.arc @position(), @y+20, @width/4, 0, Math.PI,  false
+    if @smiling
+      @context.arc @position(), @y+20, @width/4, 0, Math.PI,  false
+    else
+      @context.arc @position(), @y+20, @width/4, Math.PI/8, Math.PI*7/8,  false
     @context.stroke()
 
   rays:() ->
@@ -158,6 +162,13 @@ class Sun
     x: x + d * Math.cos(a),
     y: y + d * Math.sin(a)
 
+  check_collision:(x, y) ->
+    delta_x = x - @position()
+    delta_x = delta_x * delta_x
+    delta_y = y - @y
+    delta_y = delta_y * delta_y
+    return Math.sqrt(delta_x+delta_y) < @width
+
 class Painter
   constructor: ->
     @empty = true
@@ -170,13 +181,14 @@ class Painter
     @padding = 1
     @buildings = []
     @f = 10
+    @similing_sun = false
 
   draw_scene: ->
     @clear()
     @draw_the_sun()
     unless @empty
       @redraw_buildings()
-      @redraw_colissions()
+      @redraw_collisions()
       @redraw_gorillas()
     else
       @empty = false
@@ -190,9 +202,9 @@ class Painter
     for pos in [0...@buildings.length]
       @buildings[pos].redraw()
 
-  redraw_colissions: ->
+  redraw_collisions: ->
     for pos in [0...@buildings.length]
-      @buildings[pos].redraw_colissions()
+      @buildings[pos].redraw_collisions()
 
   draw_buildings:()->
     position = 0
@@ -209,7 +221,7 @@ class Painter
     return building
 
   draw_the_sun: ->
-    sun = new Sun(@context)
+    sun = new Sun(@context, @smiling_sun)
     sun.draw()
 
   set_color:(@color) ->
@@ -257,6 +269,8 @@ class Painter
   animate_banana:(player) ->
     @timeout = setTimeout (=>
       @draw_scene()
+      if @banana_hit_sun(player) == true
+        @smiling_sun = true
       if @banana_hit_gorilla(player) == true
         return
       if @banana_has_collided(player) == true
@@ -274,22 +288,28 @@ class Painter
       ),
       @f
 
+  banana_hit_sun:(player) ->
+    x = player.banana.x()
+    y = player.banana.y()
+
+    return new Sun(@context).check_collision(x,y)
+
   banana_has_collided:(player) ->
     x = player.banana.x()
     y = player.banana.y()
     for building in @buildings
-      return true if building.check_colission x, y
+      return true if building.check_collision x, y
     false
 
   banana_hit_gorilla:(player) ->
     x = player.banana.x()
     y = player.banana.y()
-    if @player_2.check_colission(x, y) || @player_1.check_colission(x, y)
+    if @player_2.check_collision(x, y) || @player_1.check_collision(x, y)
       dead_player = if @player_2.dead == true then @player_2 else @player_1
       winner = if @player_2.dead == false then @player_2 else @player_1
       @winner.push winner.player_number
       @timeout = setTimeout (=>
-        @animate_colission(dead_player)
+        @animate_collision(dead_player)
       ),
       0
       @update_score()
@@ -303,11 +323,11 @@ class Painter
         @f
       return true
 
-  animate_colission:(player) ->
+  animate_collision:(player) ->
     @timeout = setTimeout (=>
       @start_time = new Date()
-      player.animate_colission()
-      @animate_colission(player) unless player.explosion_width > player.width
+      player.animate_collision()
+      @animate_collision(player) unless player.explosion_width > player.width
       ),
       0
 
@@ -391,7 +411,7 @@ class Gorilla
     shape = new Shape(@context)
     shape.draw_ellipse(@x-@width, @y, 2.5*@explosion_width, @explosion_height)
 
-  animate_colission:() ->
+  animate_collision:() ->
     @context.fillStyle = '#F50B0B'
     @explosion_width += 20
     @explosion_height += 20
@@ -409,7 +429,7 @@ class Gorilla
     @context.drawImage(@image(), @x, @y, @width, @height)
     @banana.draw_frame(time)
 
-  check_colission:(x, y) ->
+  check_collision:(x, y) ->
     if (@y <= y ) && (x > @x-@width/2 &&  x < @x+@width/2)
       @dead = true
       return true
