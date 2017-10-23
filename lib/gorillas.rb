@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'haml'
 require 'coffee-script'
+require 'sass'
 
 module Gorillas
   class App < Sinatra::Base
