@@ -1,4 +1,4 @@
-# [Gorillas](http://gorillas.heroku.com) in Coffeescript
+# [Gorillas](http://gorillaz.herokuapp.com) in Coffeescript
 
 ## License
 
