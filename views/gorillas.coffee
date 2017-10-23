@@ -51,7 +51,7 @@ class Building
 
   draw:(@x, @y) ->
     @context.fillStyle = @color
-    @height = @base_height + y
+    @height = @base_height + @y
     @context.fillRect @position_at_x(), @position_at_y(), @width, @height
     @build_windows(@position_at_x(), @position_at_y())
 
