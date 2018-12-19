@@ -9,5 +9,4 @@ gem 'sass'
 group :development do
   gem 'sinatra-reloader'
   gem 'guard-coffeescript'
-  gem 'heroku'
 end
