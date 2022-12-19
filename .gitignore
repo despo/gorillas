@@ -2,3 +2,5 @@
 .rvmrc
 .DS_Store
 .rbenv*
+*~
+node_modules/
