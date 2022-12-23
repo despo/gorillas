@@ -1,4 +1,4 @@
-# [Gorillas](http://gorillaz.herokuapp.com) in Coffeescript
+# [Gorillas](http://drdub.github.io/gorillas/) in Coffeescript
 
 ## License
 
@@ -6,4 +6,12 @@ The content of this project itself is licensed under the [Creative Commons Attri
 
 ## Running it locally
 
-You need to have the different Gems listed in the ``Gemfile`` installed, then bring a local server up using ``rackup`` (package ``ruby-rack``).
+You will need node.js and npm:
+
+```bash
+$ node install
+$ node run build
+$ node start
+```
+
+The game will be available at http://127.0.0.1:8888/ 

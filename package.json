@@ -1,0 +1,35 @@
+{
+  "name": "gorillas",
+  "version": "0.0.1",
+  "description": "Gorillas in Coffeescript",
+  "main": "build.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/despo/gorillas.git"
+  },
+  "keywords": [
+    "coffescript",
+    "gorillas",
+    "qbasic"
+  ],
+  "author": "Despo Pentara",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/despo/gorillas/issues"
+  },
+  "homepage": "https://github.com/despo/gorillas",
+  "dependencies": {
+    "coffeescript": "^2.7.0",
+    "hamljs": "^0.6.2",
+    "node-sass": "^8.0.0",
+    "node-static": "^0.7.11"
+  }
+}

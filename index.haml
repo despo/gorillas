@@ -1,0 +1,48 @@
+!!!
+%html
+  %head
+    %link{ rel : "stylesheet", href : "/style.css", type : "text/css", media : "all"}
+    %script{ type : "text/javascript", src : "/javascript/jquery-1.7.2.min.js"}
+    %script{ type : "text/javascript", src : "/gorillas.js"}
+    %title Gorillas in canvas
+
+    :javascript
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-30581394-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+      var ga = document.createElement('script');
+      ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+  %body
+    %a{ href : "https://github.com/despo/gorillas" }
+      %img{ style : "position: absolute; top: 0; right: 0; border: 0;", src : "https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png", alt : "Fork me on GitHub" }
+    .board
+      .players
+        #player_1
+          Player 1
+          %br
+          %label{ for : '#player_1_angle' } angle
+          %input{ id : "player_1_angle", maxlength : 3 }
+          %br
+          %label{ for : '#player_1_velocity' } velocity
+          %input{ id  : "player_1_velocity", maxlength : 3 }
+        #player_2
+          Player 2
+          %br
+          %label{ for : '#player_2_angle' } angle
+          %input{ id : "player_2_angle", maxlength : 3 }
+          %br
+          %label{ for : '#player_2_velocity' } velocity
+          %input{ id : "player_2_velocity", maxlength : 3 }
+      %canvas{ id : "gorillas", width : "1024", height : "640" }
+
+    #score
+      %label#value 0>Score<0
+
+    %footer
+      Created by
+      %a{ href : "https://twitter.com/despo" } @despo
